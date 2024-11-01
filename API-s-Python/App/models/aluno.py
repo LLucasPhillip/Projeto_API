@@ -1,4 +1,5 @@
-from config import db  # Importando o db da configuração
+from .. import db  # Para outros modelos, como Turma e Aluno
+
 
 # Exceção personalizada para o modelo Aluno
 class AlunoNaoEncontrado(Exception):

@@ -1,5 +1,9 @@
-# app/models/__init__.py
+from flask_sqlalchemy import SQLAlchemy
 
+# Inicialização do banco de dados
+db = SQLAlchemy()
+
+# Importação dos modelos
 from .professor import Professor
 from .turma import Turma
 from .aluno import Aluno

@@ -1,8 +1,9 @@
-# app/__init__.py
-
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
+migrate = Migrate(app, db)
+
 from config import config  # Importa o dicionário de configurações do config.py
 import logging
 from logging.handlers import RotatingFileHandler
@@ -13,15 +14,6 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app(config_name='development'):
-    """
-    Cria a aplicação Flask com base na configuração selecionada.
-
-    Parâmetros:
-        config_name (str): O nome do ambiente ('development', 'testing', 'production').
-
-    Retorna:
-        app: A instância da aplicação Flask configurada.
-    """
     app = Flask(__name__)
     
     # Carrega a configuração do ambiente
@@ -35,6 +27,18 @@ def create_app(config_name='development'):
     configure_logging(app)
     
     # Registro de Blueprints
+    register_blueprints(app)
+
+    # Tratamento de erros customizado
+    register_error_handlers(app)
+
+    # Inicializa o banco de dados no primeiro contexto de aplicação
+    with app.app_context():
+        db.create_all()  # Cria todas as tabelas definidas nos modelos
+
+    return app
+
+def register_blueprints(app):
     from .routes.professor_routes import professor_bp
     from .routes.turma_routes import turma_bp
     from .routes.aluno_routes import aluno_bp
@@ -43,32 +47,14 @@ def create_app(config_name='development'):
     app.register_blueprint(turma_bp, url_prefix='/turmas')
     app.register_blueprint(aluno_bp, url_prefix='/alunos')
 
-    # Tratamento de erros customizado
-    register_error_handlers(app)
-
-    # Inicializa o banco de dados no primeiro contexto de aplicação
-    with app.app_context():
-        db.create_all()
-
-    return app
-
 def configure_logging(app):
-    """
-    Configura o sistema de log para a aplicação.
-
-    Parâmetros:
-        app: A instância da aplicação Flask.
-    """
     if not app.debug:
-        # Configuração do manipulador de arquivos rotativos
         log_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logs')
-        if not os.path.exists(log_dir):
-            os.mkdir(log_dir)
+        os.makedirs(log_dir, exist_ok=True)  # Cria o diretório de logs se não existir
         
         file_handler = RotatingFileHandler(os.path.join(log_dir, 'app.log'), maxBytes=10240, backupCount=10)
         file_handler.setLevel(logging.INFO)
-        formatter = logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+        formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
         file_handler.setFormatter(formatter)
         app.logger.addHandler(file_handler)
         
@@ -76,12 +62,6 @@ def configure_logging(app):
         app.logger.info('Application startup')
 
 def register_error_handlers(app):
-    """
-    Registra tratadores de erro personalizados para a aplicação.
-
-    Parâmetros:
-        app: A instância da aplicação Flask.
-    """
     @app.errorhandler(404)
     def not_found_error(error):
         return jsonify({"error": "Not Found", "message": "Rota não encontrada"}), 404

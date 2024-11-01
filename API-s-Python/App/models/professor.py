@@ -1,4 +1,4 @@
-from config import db  # Importando o db da configuração
+from .. import db  # Importa o db da aplicação
 
 # Exceção personalizada para o modelo Professor
 class ProfessorNaoEncontrado(Exception):

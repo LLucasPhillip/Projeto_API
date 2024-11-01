@@ -1,4 +1,4 @@
-from config import db  # Importando o db da configuração
+from .. import db  # Importando o db da inicialização do app
 
 # Exceção personalizada para o modelo Turma
 class TurmaNaoEncontrada(Exception):
