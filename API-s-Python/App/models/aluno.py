@@ -1,5 +1,9 @@
 from config import db  # Importando o db da configuração
 
+# Exceção personalizada para o modelo Aluno
+class AlunoNaoEncontrado(Exception):
+    pass
+
 # Definição do modelo Aluno
 class Aluno(db.Model):
     __tablename__ = 'alunos'  # Nome da tabela no banco de dados
@@ -20,10 +24,12 @@ class Aluno(db.Model):
         self.data_nascimento = data_nascimento
 
     def calcular_media(self):
+        """Calcula a média final a partir das notas do primeiro e segundo semestre."""
         if self.nota_primeiro_semestre is not None and self.nota_segundo_semestre is not None:
             self.media_final = (self.nota_primeiro_semestre + self.nota_segundo_semestre) / 2
 
     def to_dict(self):
+        """Converte a instância do Aluno em um dicionário."""
         return {
             'id': self.id,
             'nome': self.nome,
@@ -35,22 +41,22 @@ class Aluno(db.Model):
             'media_final': self.media_final
         }
 
-# Exceção personalizada
-class AlunoNaoEncontrado(Exception):
-    pass
-
 # Funções para manipulação dos dados dos alunos
+
 def aluno_por_id(id_aluno):
+    """Obtém um aluno pelo seu ID."""
     aluno = Aluno.query.get(id_aluno)
     if not aluno:
         raise AlunoNaoEncontrado(f'Aluno com ID {id_aluno} não encontrado.')
     return aluno.to_dict()
 
 def listar_alunos():
+    """Lista todos os alunos."""
     alunos = Aluno.query.all()
     return [aluno.to_dict() for aluno in alunos]
 
 def adicionar_aluno(aluno_data):
+    """Adiciona um novo aluno ao banco de dados."""
     novo_aluno = Aluno(
         nome=aluno_data['nome'],
         idade=aluno_data['idade'],
@@ -61,6 +67,7 @@ def adicionar_aluno(aluno_data):
     db.session.commit()
 
 def atualizar_aluno(id_aluno, novos_dados):
+    """Atualiza as informações de um aluno existente."""
     aluno = Aluno.query.get(id_aluno)
     if not aluno:
         raise AlunoNaoEncontrado(f'Aluno com ID {id_aluno} não encontrado.')
@@ -68,9 +75,13 @@ def atualizar_aluno(id_aluno, novos_dados):
     aluno.idade = novos_dados.get('idade', aluno.idade)
     aluno.turma_id = novos_dados.get('turma_id', aluno.turma_id)
     aluno.data_nascimento = novos_dados.get('data_nascimento', aluno.data_nascimento)
+    aluno.nota_primeiro_semestre = novos_dados.get('nota_primeiro_semestre', aluno.nota_primeiro_semestre)
+    aluno.nota_segundo_semestre = novos_dados.get('nota_segundo_semestre', aluno.nota_segundo_semestre)
+    aluno.calcular_media()  # Atualiza a média após a mudança nas notas
     db.session.commit()
 
 def excluir_aluno(id_aluno):
+    """Remove um aluno do banco de dados."""
     aluno = Aluno.query.get(id_aluno)
     if not aluno:
         raise AlunoNaoEncontrado(f'Aluno com ID {id_aluno} não encontrado.')
