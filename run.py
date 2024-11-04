@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 
-app = Flask(__name__)
+app = Flask(_name_)
 
 # Dados em memória
 professores = {}
@@ -9,7 +9,7 @@ alunos = {}
 
 # Entidades
 class Professor:
-    def __init__(self, id, nome, idade, materia, observacoes):
+    def _init_(self, id, nome, idade, materia, observacoes):
         self.id = id
         self.nome = nome
         self.idade = idade
@@ -17,7 +17,7 @@ class Professor:
         self.observacoes = observacoes
 
 class Turma:
-    def __init__(self, id, descricao, professor_id, ativo=True):
+    def _init_(self, id, descricao, professor_id, ativo=True):
         self.id = id
         self.descricao = descricao
         self.professor_id = professor_id  # Relacionamento com Professor via ID
@@ -25,7 +25,7 @@ class Turma:
         self.alunos = []  # Lista de IDs de alunos
 
 class Aluno:
-    def __init__(self, id, nome, idade, turma_id, data_nascimento, nota_primeiro_semestre, nota_segundo_semestre):
+    def _init_(self, id, nome, idade, turma_id, data_nascimento, nota_primeiro_semestre, nota_segundo_semestre):
         self.id = id
         self.nome = nome
         self.idade = idade
@@ -87,8 +87,9 @@ def listar_alunos():
 def listar_alunos_turma(turma_id):
     if turma_id not in turmas:
         return jsonify({'mensagem': 'Turma não encontrada!'}), 404
-    turma_alunos = [alunos[aluno_id].__dict__ for aluno_id in turmas[turma_id].alunos]
+    turma_alunos = [alunos[aluno_id]._dict_ for aluno_id in turmas[turma_id].alunos]
     return jsonify(turma_alunos)
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     app.run(debug=True)
+    
