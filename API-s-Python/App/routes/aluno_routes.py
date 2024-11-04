@@ -11,18 +11,18 @@ from config import db
 
 alunos_blueprint = Blueprint('alunos', __name__)
 
-# ROTA PARA O INDEX
+# ---------------------------------------- index
 @alunos_blueprint.route('/', methods=['GET'])
 def getIndex():
     return "Bem-vindo ao índice de alunos!"
 
-# ROTA PARA TODOS OS ALUNOS (Renderiza um template)
+# ----------------------- 
 @alunos_blueprint.route('/', methods=['GET'])
 def get_alunos():
     alunos = listar_alunos()
     return render_template("alunos.html", alunos=alunos)
 
-# ROTA PARA UM ALUNO (Renderiza um template)
+# ---------------------------------
 @alunos_blueprint.route('/<int:id_aluno>', methods=['GET'])
 def get_aluno(id_aluno):
     try:
@@ -31,12 +31,12 @@ def get_aluno(id_aluno):
     except AlunoNaoEncontrado:
         return jsonify({'message': 'Aluno não encontrado'}), 404
 
-# ROTA ACESSAR O FORMULÁRIO DE CRIAÇÃO DE UM NOVO ALUNO
+# ---------------------------------- rota acesso para criação de novo aluno
 @alunos_blueprint.route('/adicionar', methods=['GET'])
 def adicionar_aluno_page():
     return render_template('criarAlunos.html')
 
-# ROTA QUE CRIA UM NOVO ALUNO
+# --------------------------------------
 @alunos_blueprint.route('/', methods=['POST'])
 def create_aluno():
     data = request.form
@@ -50,7 +50,7 @@ def create_aluno():
     adicionar_aluno(novo_aluno)
     return redirect(url_for('alunos.get_alunos'))
 
-# ROTA PARA O FORMULÁRIO PARA EDITAR UM ALUNO
+# ------------------------------------------------
 @alunos_blueprint.route('/<int:id_aluno>/editar', methods=['GET'])
 def editar_aluno_page(id_aluno):
     try:
@@ -59,7 +59,7 @@ def editar_aluno_page(id_aluno):
     except AlunoNaoEncontrado:
         return jsonify({'message': 'Aluno não encontrado'}), 404
 
-# ROTA QUE EDITA UM ALUNO
+# ---------------------------------------------------
 @alunos_blueprint.route('/<int:id_aluno>', methods=['POST'])
 def update_aluno(id_aluno):
     try:
@@ -74,7 +74,7 @@ def update_aluno(id_aluno):
     except AlunoNaoEncontrado:
         return jsonify({'message': 'Aluno não encontrado'}), 404
 
-# ROTA QUE DELETA UM ALUNO
+# --------------------------------------------------------
 @alunos_blueprint.route('/delete/<int:id_aluno>', methods=['POST'])
 def delete_aluno(id_aluno):
     try:
@@ -83,12 +83,12 @@ def delete_aluno(id_aluno):
     except AlunoNaoEncontrado:
         return jsonify({'message': 'Aluno não encontrado'}), 404
 
-# ROTA PARA TODOS OS ALUNOS (API, JSON response)
+# --------------------------------- rota para todos alunos (API, JSON)
 @alunos_blueprint.route('/api/alunos', methods=['GET'])
 def api_get_alunos():
     return jsonify(listar_alunos())
 
-# ROTA PARA UM ALUNO (API, JSON response)
+# R---------------------------------- rota para 1 aluno (API, JSON)
 @alunos_blueprint.route('/api/alunos/<int:id_aluno>', methods=['GET'])
 def api_get_aluno(id_aluno):
     try:
@@ -97,14 +97,14 @@ def api_get_aluno(id_aluno):
     except AlunoNaoEncontrado:
         return jsonify({'message': 'Aluno não encontrado'}), 404
 
-# ROTA QUE CRIA UM NOVO ALUNO (API, JSON response)
+# ----------------------------
 @alunos_blueprint.route('/api/alunos', methods=['POST'])
 def api_create_aluno():
     data = request.json
     adicionar_aluno(data)
     return jsonify(data), 201
 
-# ROTA QUE EDITA UM ALUNO (API, JSON response)
+# ----------------------------------- edita alunos
 @alunos_blueprint.route('/api/alunos/<int:id_aluno>', methods=['PUT'])
 def api_update_aluno(id_aluno):
     data = request.json
@@ -114,7 +114,7 @@ def api_update_aluno(id_aluno):
     except AlunoNaoEncontrado:
         return jsonify({'message': 'Aluno não encontrado'}), 404
 
-# ROTA QUE DELETA UM ALUNO (API, JSON response)
+# --------------------------------------- deleta aluno
 @alunos_blueprint.route('/api/alunos/<int:id_aluno>', methods=['DELETE'])
 def api_delete_aluno(id_aluno):
     try:

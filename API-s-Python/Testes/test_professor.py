@@ -1,23 +1,23 @@
 import unittest
 from app import create_app, db
-from app.models.professor import Professor  # Ajuste se necessário
+from app.models.professor import Professor 
 
 class TestProfessor(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         """Executado uma vez antes de todos os testes."""
-        cls.app = create_app('testing')  # Use a configuração de teste
+        cls.app = create_app('testing')  
         cls.client = cls.app.test_client()
         with cls.app.app_context():
-            db.create_all()  # Cria as tabelas
+            db.create_all() 
 
     @classmethod
     def tearDownClass(cls):
         """Executado uma vez após todos os testes."""
         with cls.app.app_context():
             db.session.remove()
-            db.drop_all()  # Remove as tabelas
+            db.drop_all() 
 
     def setUp(self):
         """Executado antes de cada teste."""
@@ -34,20 +34,20 @@ class TestProfessor(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIn(b'Professor criado com sucesso!', response.data)
 
-        # Verifique se o professor foi realmente adicionado
+        #
         professor = Professor.query.filter_by(nome='Prof. Silva').first()
         self.assertIsNotNone(professor)
 
     def test_listar_professores(self):
         """Teste para listar professores."""
-        self.client.post('/professores/', json=self.professor_data)  # Cria um professor
+        self.client.post('/professores/', json=self.professor_data) 
         response = self.client.get('/professores/')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Prof. Silva', response.data)
 
     def test_atualizar_professor(self):
         """Teste para atualizar um professor."""
-        # Criação do professor para teste
+        
         professor = Professor(**self.professor_data)
         db.session.add(professor)
         db.session.commit()
@@ -59,7 +59,7 @@ class TestProfessor(unittest.TestCase):
             'observacoes': 'Agora especialista em Geometria'
         }
         response = self.client.post(f'/professores/{professor.id}', json=updated_data)
-        self.assertEqual(response.status_code, 302)  # Redireciona após atualizar
+        self.assertEqual(response.status_code, 302)
 
         updated_professor = Professor.query.get(professor.id)
         self.assertEqual(updated_professor.nome, 'Prof. Silva Atualizado')
@@ -71,7 +71,7 @@ class TestProfessor(unittest.TestCase):
         db.session.commit()
 
         response = self.client.post(f'/professores/delete/{professor.id}')
-        self.assertEqual(response.status_code, 302)  # Redireciona após deletar
+        self.assertEqual(response.status_code, 302) 
 
         deleted_professor = Professor.query.get(professor.id)
         self.assertIsNone(deleted_professor)

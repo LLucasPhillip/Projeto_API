@@ -5,7 +5,6 @@ from app import db
 def adicionar_aluno():
     data = request.get_json()
 
-    # Verificando se todos os dados necessários estão presentes
     if not all(key in data for key in ('id', 'nome', 'idade', 'turma_id', 'data_nascimento', 'nota_primeiro_semestre', 'nota_segundo_semestre')):
         return jsonify({'mensagem': 'Dados incompletos para adicionar o aluno!'}), 400
 
@@ -60,7 +59,8 @@ def atualizar_aluno(aluno_id):
         if not aluno:
             return jsonify({'mensagem': 'Aluno não encontrado!'}), 404
 
-        # Atualizando os dados do aluno
+        # Atualizand dados do aluno (Tulio)
+        
         for key, value in data.items():
             setattr(aluno, key, value)
 

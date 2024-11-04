@@ -1,15 +1,12 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
-migrate = Migrate(app, db)
-
-from config import config  # Importa o dicionário de configurações do config.py
+from config import config
 import logging
 from logging.handlers import RotatingFileHandler
 import os
 
-# Inicializa o banco de dados e a migração
+# BDD
 db = SQLAlchemy()
 migrate = Migrate()
 
@@ -23,18 +20,15 @@ def create_app(config_name='development'):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Configurações de log
     configure_logging(app)
     
-    # Registro de Blueprints
     register_blueprints(app)
 
-    # Tratamento de erros customizado
     register_error_handlers(app)
 
     # Inicializa o banco de dados no primeiro contexto de aplicação
     with app.app_context():
-        db.create_all()  # Cria todas as tabelas definidas nos modelos
+        db.create_all() 
 
     return app
 

@@ -1,30 +1,30 @@
 import unittest
 from app import create_app, db
-from app.models.aluno import Aluno  # Ajuste se necessário
+from app.models.aluno import Aluno
 from flask import json
 
 class TestAluno(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Executado uma vez antes de todos os testes."""
-        cls.app = create_app('testing')  # Use a configuração de teste
+        cls.app = create_app('testing')
         cls.client = cls.app.test_client()
         with cls.app.app_context():
-            db.create_all()  # Cria as tabelas
+            db.create_all() 
 
     @classmethod
     def tearDownClass(cls):
         """Executado uma vez após todos os testes."""
         with cls.app.app_context():
             db.session.remove()
-            db.drop_all()  # Remove as tabelas
+            db.drop_all()
 
     def setUp(self):
         """Executado antes de cada teste."""
         self.aluno_data = {
             'nome': 'Teste Aluno',
             'idade': 20,
-            'turma_id': 1,  # Altere conforme necessário
+            'turma_id': 1,
             'data_nascimento': '2003-01-01'
         }
 
@@ -32,7 +32,7 @@ class TestAluno(unittest.TestCase):
         """Teste para criar um aluno."""
         response = self.client.post('/alunos', data=self.aluno_data)
         self.assertEqual(response.status_code, 302)  # Redireciona após criar
-        # Verifique se o aluno foi realmente adicionado
+        # Verifica se o aluno foi realmente adicionado
         aluno = Aluno.query.filter_by(nome='Teste Aluno').first()
         self.assertIsNotNone(aluno)
 
@@ -48,7 +48,6 @@ class TestAluno(unittest.TestCase):
         db.session.add(aluno)
         db.session.commit()
 
-        # Dados de atualização
         updated_data = {
             'nome': 'Aluno Atualizado',
             'idade': 21,
@@ -56,7 +55,7 @@ class TestAluno(unittest.TestCase):
             'data_nascimento': '2002-01-01'
         }
         response = self.client.post(f'/alunos/{aluno.id}', data=updated_data)
-        self.assertEqual(response.status_code, 302)  # Redireciona após atualizar
+        self.assertEqual(response.status_code, 302)  # Redireciona
 
         updated_aluno = Aluno.query.get(aluno.id)
         self.assertEqual(updated_aluno.nome, 'Aluno Atualizado')
@@ -68,7 +67,7 @@ class TestAluno(unittest.TestCase):
         db.session.commit()
 
         response = self.client.post(f'/alunos/delete/{aluno.id}')
-        self.assertEqual(response.status_code, 302)  # Redireciona após deletar
+        self.assertEqual(response.status_code, 302)  # Redireciona
 
         deleted_aluno = Aluno.query.get(aluno.id)
         self.assertIsNone(deleted_aluno)

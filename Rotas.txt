@@ -1,0 +1,34 @@
+Para inicializar o projeto deve rodar o run.py! 
+
+
+PROFESSORES:
+
+{
+    "id": 1,
+    "nome": "João da Sia",
+    "idade": 40,
+    "materia": "Matemática",
+    "observacoes": "Muito experiente"
+}
+
+ALUNOS ADD:
+{
+    "id": 1,
+    "nome": "Maria da Silva",
+    "idade": 15,
+    "turma_id": 1,
+    "data_nascimento": "2008-05-01",
+    "nota_primeiro_semestre": 7.5,
+    "nota_segundo_semestre": 8.0
+}
+
+TURMAS ADD:
+{
+    "id": 1,
+    "descricao": "Turma de Matemática",
+    "professor_id": 1,
+    "ativo": true
+}
+
+
+

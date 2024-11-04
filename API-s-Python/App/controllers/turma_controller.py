@@ -5,7 +5,7 @@ from app import db
 def adicionar_turma():
     data = request.get_json()
 
-    # Verificando se todos os dados necessários estão presentes
+    # Verificação
     if not all(key in data for key in ('id', 'descricao', 'professor_id')):
         return jsonify({'mensagem': 'Dados incompletos para adicionar a turma!'}), 400
 
@@ -52,7 +52,8 @@ def atualizar_turma(turma_id):
         if not turma:
             return jsonify({'mensagem': 'Turma não encontrada!'}), 404
 
-        # Atualizando os dados da turma
+        # Atualizando dados da turma
+        
         for key, value in data.items():
             setattr(turma, key, value)
 
